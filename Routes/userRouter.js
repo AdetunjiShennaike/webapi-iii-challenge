@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
     res.status(200).json(user);
   })
   .catch( err => {
-    return sendError( 'User information Unavailable at this moment', err );
+    return sendError( 'User information Unavailable at this moment', res );
   })
 })
 
@@ -46,18 +46,18 @@ router.get('/:id', (req, res) => {
     }
   })
   .catch( err => {
-    return sendError( 'User information Unavailable at this moment', err );
+    return sendError( 'User information Unavailable at this moment', res );
   })
 })
 
 //get users post data
-router.get(':id/posts', (req, res) => {
+router.get('/:id/posts', (req, res) => {
   //define id
   const ID = req.params.id
   Users
   .getUserPosts(ID)
   .then( user => {
-    if (user === undefined) {
+    if (user.length == 0) {
       return sendMissing(res);
     }
     else{
@@ -65,7 +65,7 @@ router.get(':id/posts', (req, res) => {
     }
   })
   .catch( err => {
-    return sendError( 'User information Unavailable at this moment', err );
+    return sendError( 'User information Unavailable at this moment', res );
   })
 })
 
@@ -94,7 +94,7 @@ router.put('/:id', (req, res) => {
     }
   })
   .catch( err => {
-    return sendError( 'This function is currently unavailable', err );
+    return sendError( 'This function is currently unavailable', res );
   })
 })
 
@@ -113,7 +113,7 @@ router.delete('/:id', (req, res) => {
     }
   })
   .catch( err => {
-    return sendError( 'This function is currently unavailable', err );
+    return sendError( 'This function is currently unavailable', res );
   })
   //delete the user
   Users
@@ -127,7 +127,7 @@ router.delete('/:id', (req, res) => {
     }
   })
   .catch( err => {
-    return sendError( 'This function is currently unavailable', err );
+    return sendError( 'This function is currently unavailable', res );
   })
 })
 
@@ -136,7 +136,7 @@ router.post('/', (req, res) => {
   //define req.body
   const { name } = req.body;
   const user = { name };
-
+  
   //check the req body
   if(!name) { 
     return res.status(400).json({ error: 'Please provide the NEW user name' });
@@ -148,7 +148,8 @@ router.post('/', (req, res) => {
     res.status(200).json(newUser);
   })
   .catch( err => {
-    return sendError( 'This function is currently unavailable', err );
+    console.log(err)
+    return sendError( 'This function is currently unavailable', res );
   })
 })
 

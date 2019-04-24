@@ -111,23 +111,25 @@ router.delete('/:id', (req, res) => {
 })
 
 //new post
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
   //define req.body
   const { text } = req.body;
   const posted = text;
 
+  console.log(text, posted)
   //check the req body
   if(!text) { 
     return res.status(400).json({ error: 'Please provide the NEW post text' });
   }
   Posts
-  .insert(posted)
+  .insert(req.body)
   .then( post => {
     // console.log(post)
     // let newPost = { ...post, posted }
     res.status(200).json(post);
   })
   .catch( err => {
+    console.log(err)
     return sendError( 'This function is currently unavailable', res );
   })
 })
