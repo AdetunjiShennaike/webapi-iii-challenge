@@ -18,6 +18,19 @@ const sendMissing = (res) => {
   res.json({ errorMessage: 'The User does not exist.' });
 }
 
+//define custom middleware that will be used 
+const upperCase = (req, res, next) => {
+  let { name } = req.body;
+  capitalName = name.charAt(0).toUpperCase() + name.slice(1)
+
+  if (name !== capitalName) {
+    return sendError( 'Please make sure your name starts with a Capital', res );
+  }
+  else{ 
+    next();
+  }
+}
+
 //make crud endpoints
 //get request
 router.get('/', (req, res) => {
@@ -70,7 +83,7 @@ router.get('/:id/posts', (req, res) => {
 })
 
 //update user
-router.put('/:id', (req, res) => {
+router.put('/:id', upperCase, (req, res) => {
   //define id 
   const ID = req.params.id
 
@@ -89,7 +102,7 @@ router.put('/:id', (req, res) => {
       return sendMissing(res);
     }
     else{
-      newUser = { ...person, user }
+      newUser = { ID, name }
       return res.status(201).json(newUser);
     }
   })
@@ -132,7 +145,7 @@ router.delete('/:id', (req, res) => {
 })
 
 //new user
-router.post('/', (req, res) => {
+router.post('/', upperCase, (req, res) => {
   //define req.body
   const { name } = req.body;
   const user = { name };
@@ -144,8 +157,7 @@ router.post('/', (req, res) => {
   Users
   .insert(user)
   .then( person => {
-    let newUser = { ...person }
-    res.status(200).json(newUser);
+    res.status(200).json(person);
   })
   .catch( err => {
     console.log(err)

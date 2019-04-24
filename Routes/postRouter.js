@@ -54,21 +54,22 @@ router.put('/:id', (req, res) => {
   const ID = req.params.id
 
   //define req.body
-  const text = req.body;
-  const posted = { text };
+  const { text, user_id } = req.body;
+  const posted = { text, user_id };
 
   //check the req body
-  if(!text) { 
+  if(!text || !user_id) { 
     return res.status(400).json({ error: 'Please provide the NEW post text' });
   }
   Posts
   .update(ID, posted)
-  .then( person => {
-    if (person === undefined) {
+  .then( post => {
+    console.log(post)
+    if (post === 0) {
       return sendMissingID(res);
     }
     else{
-      newPost = { ...person, posted }
+      newPost = { ID, text, user_id }
       return res.status(201).json(newPost);
     }
   })
@@ -82,7 +83,7 @@ router.delete('/:id', (req, res) => {
   //set id
   const ID = req.params.id
   //grab post information 
-  Posts.findById(ID)
+  Posts.getById(ID)
   .then( post => { 
     if (post === undefined) {
       return sendMissingID(res);
@@ -113,19 +114,16 @@ router.delete('/:id', (req, res) => {
 //new post
 router.post('/', (req, res) => {
   //define req.body
-  const { text } = req.body;
-  const posted = text;
+  const { text, user_id } = req.body;
+  const posted = { text, user_id };
 
-  console.log(text, posted)
   //check the req body
-  if(!text) { 
+  if(!text || !user_id) { 
     return res.status(400).json({ error: 'Please provide the NEW post text' });
   }
   Posts
-  .insert(req.body)
+  .insert(posted)
   .then( post => {
-    // console.log(post)
-    // let newPost = { ...post, posted }
     res.status(200).json(post);
   })
   .catch( err => {

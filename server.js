@@ -16,8 +16,6 @@ server.use(cors());
 server.use(helmet());
 server.use(morgan('common'));
 
-//define custom middleware that will be used 
-
 
 //load the routes that were imported
 server.use('/api/users', userRouter);
