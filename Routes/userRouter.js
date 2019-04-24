@@ -75,7 +75,7 @@ router.put('/:id', (req, res) => {
   const ID = req.params.id
 
   //define req.body
-  const name = req.body;
+  const { name } = req.body;
   const user = { name };
 
   //check the req body
@@ -103,7 +103,7 @@ router.delete('/:id', (req, res) => {
   //set id
   const ID = req.params.id
   //grab user information 
-  Users.findById(ID)
+  Users.getById(ID)
   .then( user => { 
     if (user === undefined) {
       return sendMissing(res);
@@ -134,7 +134,7 @@ router.delete('/:id', (req, res) => {
 //new user
 router.post('/', (req, res) => {
   //define req.body
-  const name = req.body;
+  const { name } = req.body;
   const user = { name };
 
   //check the req body
@@ -144,7 +144,7 @@ router.post('/', (req, res) => {
   Users
   .insert(user)
   .then( person => {
-    let newUser = { ...person, user }
+    let newUser = { ...person }
     res.status(200).json(newUser);
   })
   .catch( err => {

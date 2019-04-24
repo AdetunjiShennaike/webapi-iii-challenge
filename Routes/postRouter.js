@@ -9,13 +9,11 @@ const router = express.Router();
 
 //make a constant reply for 404 & 500
 const sendError = (msg, res) => {
-  res.status(500);
-  res.json({ errorMessage: `${msg}` })
+  res.status(500).json({ errorMessage: `${msg}` })
 };
 
 const sendMissingID = (res) => {
-  res.status(404);
-  res.json({ errorMessage: 'The post with the specified ID does not exist.' });
+  res.status(404).json({ errorMessage: 'The post with the specified ID does not exist.' });
 }
 
 //make crud endpoints
@@ -27,7 +25,7 @@ router.get('/', (req, res) => {
     res.status(200).json(post);
   })
   .catch( err => {
-    return sendError( 'Post information Unavailable at this moment', err );
+    return sendError( 'Post information Unavailable at this moment', res );
   })
 })
 
@@ -38,7 +36,6 @@ router.get('/:id', (req, res) => {
   Posts
   .getById(ID)
   .then( post => {
-    console.log(post);
     if (post === undefined) {
       return sendMissingID(res);
     }
@@ -47,7 +44,7 @@ router.get('/:id', (req, res) => {
     }
   })
   .catch( err => {
-    return sendError( 'post information Unavailable at this moment', err );
+    return sendError( 'post information Unavailable at this moment', res );
   })
 })
 
@@ -57,26 +54,26 @@ router.put('/:id', (req, res) => {
   const ID = req.params.id
 
   //define req.body
-  const name = req.body;
-  const post = { name };
+  const text = req.body;
+  const posted = { text };
 
   //check the req body
-  if(!name) { 
-    return res.status(400).json({ error: 'Please provide the NEW post name' });
+  if(!text) { 
+    return res.status(400).json({ error: 'Please provide the NEW post text' });
   }
   Posts
-  .update(ID, post)
+  .update(ID, posted)
   .then( person => {
     if (person === undefined) {
       return sendMissingID(res);
     }
     else{
-      newPost = { ...person, post }
+      newPost = { ...person, posted }
       return res.status(201).json(newPost);
     }
   })
   .catch( err => {
-    return sendError( 'This function is currently unavailable', err );
+    return sendError( 'This function is currently unavailable', res );
   })
 })
 
@@ -95,7 +92,7 @@ router.delete('/:id', (req, res) => {
     }
   })
   .catch( err => {
-    return sendError( 'This function is currently unavailable', err );
+    return sendError( 'This function is currently unavailable', res );
   })
   //delete the post
   Posts
@@ -109,28 +106,29 @@ router.delete('/:id', (req, res) => {
     }
   })
   .catch( err => {
-    return sendError( 'This function is currently unavailable', err );
+    return sendError( 'This function is currently unavailable', res );
   })
 })
 
 //new post
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   //define req.body
-  const name = req.body;
-  const post = { name };
+  const { text } = req.body;
+  const posted = text;
 
   //check the req body
-  if(!name) { 
-    return res.status(400).json({ error: 'Please provide the NEW post name' });
+  if(!text) { 
+    return res.status(400).json({ error: 'Please provide the NEW post text' });
   }
   Posts
-  .insert(post)
-  .then( person => {
-    let newPost = { ...person, post }
-    res.status(200).json(newPost);
+  .insert(posted)
+  .then( post => {
+    // console.log(post)
+    // let newPost = { ...post, posted }
+    res.status(200).json(post);
   })
   .catch( err => {
-    return sendError( 'This function is currently unavailable', err );
+    return sendError( 'This function is currently unavailable', res );
   })
 })
 
